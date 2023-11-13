@@ -1,9 +1,11 @@
+import { Alert } from "./component/Alert";
 import { Header } from "./component/Header";
 import { useHashNavigation } from "./hooks/useHashNavigation";
 import { Contact } from "./pages/Contact";
 import { Home } from "./pages/Home";
 import { NotFound } from "./pages/NotFound";
 import { Single } from "./pages/Single";
+import { ErrorBoundary } from "react-error-boundary";
 
 function App() {
   const { page, param } = useHashNavigation();
@@ -13,9 +15,17 @@ function App() {
     <>
       <Header page={page} />
       <p>Page: {page}</p>
-      <div className="container my-3">{pageContent}</div>
+      <div className="container my-3">
+        <ErrorBoundary FallbackComponent={PageError}>
+          {pageContent}
+        </ErrorBoundary>
+      </div>
     </>
   );
+}
+
+function PageError({ error }) {
+  return <Alert type="danger">{error.toString()}</Alert>;
 }
 
 function getPageContent(page, param) {

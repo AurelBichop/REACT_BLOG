@@ -1,17 +1,21 @@
 import { Alert } from "../component/Alert";
 import { Button } from "../component/Button";
+import { Modal } from "../component/Modal";
 import { Spinner } from "../component/Spinner";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 import { useFetch } from "../hooks/useFetch";
+import { useToggle } from "../hooks/useToggle";
+import { EditPostModal } from "./Single/EditPostModal";
 
 export function Single({ postId }) {
   const {
     data: post,
     loading,
     error,
+    setData,
   } = useFetch(`https://jsonplaceholder.typicode.com/posts/${postId}`);
   useDocumentTitle(post?.title);
-
+  const [isEditing, toggleEditing] = useToggle(false);
   if (loading) {
     return <Spinner />;
   }
@@ -19,6 +23,14 @@ export function Single({ postId }) {
   if (error) {
     return <Alert type="danger">{error.toString()}</Alert>;
   }
+
+  const handleSave = (data) => {
+    setData({
+      ...post,
+      ...data,
+    });
+    toggleEditing();
+  };
 
   return (
     <>
@@ -34,7 +46,16 @@ export function Single({ postId }) {
           <p>
             <a href={`#post:${post.id + 1}`}>Article Suivant</a>
           </p>
-          <Button variant="secondary">Editer l'article</Button>
+          {isEditing && (
+            <EditPostModal
+              post={post}
+              onClose={toggleEditing}
+              onSave={handleSave}
+            />
+          )}
+          <Button variant="secondary" onClick={toggleEditing}>
+            Editer l'article
+          </Button>
         </div>
       )}
     </>
