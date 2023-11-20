@@ -1,10 +1,10 @@
+import { Suspense, lazy } from "react";
 import { Alert } from "./component/Alert";
 import { Header } from "./component/Header";
 import { useHashNavigation } from "./hooks/useHashNavigation";
 import { Contact } from "./pages/Contact";
 import { Home } from "./pages/Home";
 import { NotFound } from "./pages/NotFound";
-import { Single } from "./pages/Single";
 import { ErrorBoundary } from "react-error-boundary";
 
 function App() {
@@ -38,7 +38,12 @@ function getPageContent(page, param) {
   }
 
   if (page === "post") {
-    return <Single postId={param} />;
+    const SingleLazy = lazy(() => import("./pages/Single"));
+    return (
+      <Suspense fallback={<div>Chargement des Composants en cours</div>}>
+        <SingleLazy postId={param} />
+      </Suspense>
+    );
   }
 
   return <NotFound page={page} />;

@@ -7,7 +7,7 @@ import { useFetch } from "../hooks/useFetch";
 import { useToggle } from "../hooks/useToggle";
 import { EditPostModal } from "./Single/EditPostModal";
 
-export function Single({ postId }) {
+export default function Single({ postId }) {
   const {
     data: post,
     loading,
